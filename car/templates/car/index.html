@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Car list!</title>
+</head>
+<body>
+<div class="container py-3 jumbotron">
+    <div class="text-center">
+        <h1>Cars:</h1>
+    </div>
+    {% if cars %}
+    {% for car in cars %}
+    <div id="car-{{car.id}}" class="row">
+        <div class="col">
+            <h5>{{ car.name }}</h5>
+            <div class="d-flex">
+                <p>Price: {{ car.price }}</p>
+                <p class="mx-4">Speed: {{ car.speed }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <a href="/car/{{ car.id }}/delete/" class="btn btn-danger">
+                x (url)
+            </a>
+
+            <form class="d-inline" action="/car/{{ car.id }}/delete/" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    x (form)
+                </button>
+            </form>
+
+            <div class="delete-ajax btn btn-danger" data="{{ car.id}}">
+                x (ajax)
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <hr>
+    <div class="my-3 w-50 mx-auto text-center">
+        <h5>Добавить новую машину</h5>
+        <form action="/car/add/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="name" name="name">
+            </div>
+            <div class="form-group">
+                <input type="number" class="form-control" placeholder="price" name="price">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="speed" name="speed">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Добавить
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script>
+    $(".delete-ajax").on("click", (event) => {
+        let pk = event.target.getAttribute('data')
+        $.ajax({url: `/car/${pk}/delete/`, type: 'GET',});
+        $(`#car-${pk}`).remove();
+    })
+</script>
+</body>
+</html>
