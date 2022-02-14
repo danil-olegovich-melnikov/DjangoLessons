@@ -50,4 +50,5 @@ class CarTestClass(TestCase):
         response = c.get(URL_CAR_LIST)
         cars = response.context['cars']
 
+        self.assertEqual(car_length + 1, len(cars))
         self.assertEqual(car_count(cars), 1)
