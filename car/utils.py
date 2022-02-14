@@ -27,12 +27,11 @@ def car_delete(pk: int) -> None:
 
 def car_append(name: str, speed: int, price: int) -> None:
     """ Append the car instance """
-    cars.append(
-        Car(
-            id=cars[-1].id + 1,
-            name=name,
-            speed=speed,
-            price=price,
-        )
-    )
+
+    if len(cars):
+        pk = cars[-1].id + 1
+    else:
+        pk = 1
+
+    cars.append(Car(id=pk, name=name, speed=speed, price=price))
 
