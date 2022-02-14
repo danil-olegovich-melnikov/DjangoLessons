@@ -7,8 +7,11 @@ from django.urls import reverse
 from car.utils import car_append
 from car.utils import car_delete
 
+from car.db import Car
+
 URL_CAR_LIST = "/car/"
 URL_CAR_ADD = "/car/add/"
+URL_CAR_DELETE = "/car/delete/"
 
 
 CAR = {
@@ -18,9 +21,12 @@ CAR = {
 }
 
 
+def check_dict_class(c: dict, C: CAR):
+    return C.name == c["name"] and C.price == c["price"] and C.speed == c["speed"]
+
 def car_count(cars: List) -> int:
     """ Find the number of the CAR in cars """
-    return sum([c.name == CAR["name"] and c.price == CAR["price"] and c.speed == CAR["speed"] for c in cars])
+    return sum([check_dict_class(CAR, c) for c in cars])
 
 
 class CarTestClass(TestCase):
@@ -52,6 +58,31 @@ class CarTestClass(TestCase):
         cars = response.context['cars']
 
         self.assertEqual(car_length + 1, len(cars))
+        self.assertEqual(car_count(cars), 1)
+
+    def test_delete_car(self):
+        c = Client()
+
+        self.assertEqual(reverse("car:car_add"), URL_CAR_ADD)
+        response = c.post(URL_CAR_ADD, CAR)
+        self.assertEqual(response.url, URL_CAR_LIST)
+
+        response = c.get(URL_CAR_LIST)
+        self.assertNotIn("cars", response.context['cars'])
+        cars = response.context['cars']
+        car_length = len(response.context["cars"])
+
+        car_id = -1
+        for car in cars:
+            if check_dict_class(CAR, car):
+                car_id = car.id
+
+        self.assertNotEqual(car_id, -1)
+        c.get(reverse("car:car_delete", kwargs={'pk': car_id}))
+        response = c.get(URL_CAR_LIST)
+        cars = response.context['cars']
+
+        self.assertEqual(car_length - 1, len(cars))
         self.assertEqual(car_count(cars), 1)
 
     def test_add_car_empty_db(self):
