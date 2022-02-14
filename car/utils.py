@@ -18,14 +18,14 @@ def put(pk: int, name: str, speed: int, price: int) -> None:
 
     cars[car_index] = Car(pk, name, speed, price)
 
-def delete(pk: int) -> None:
+def car_delete(pk: int) -> None:
     """ Delete the car instance by pk """
 
     global cars
     cars = [car for car in cars if car.id != pk]
 
 
-def append(name: str, speed: int, price: int) -> None:
+def car_append(name: str, speed: int, price: int) -> None:
     """ Append the car instance """
     cars.append(
         Car(

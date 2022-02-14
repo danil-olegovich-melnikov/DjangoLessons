@@ -4,6 +4,8 @@ from unittest import TestCase
 from django.test import Client
 from django.urls import reverse
 
+from car.utils import car_append
+from car.utils import car_delete
 
 URL_CAR_LIST = "/car/"
 URL_CAR_ADD = "/car/add/"
@@ -33,7 +35,6 @@ class CarTestClass(TestCase):
     def test_add_car(self):
         """ Test add car view """
         c = Client()
-
         self.assertEqual(reverse("car:car_list"), URL_CAR_LIST)
 
         response = c.get(URL_CAR_LIST)
@@ -52,3 +53,17 @@ class CarTestClass(TestCase):
 
         self.assertEqual(car_length + 1, len(cars))
         self.assertEqual(car_count(cars), 1)
+
+    def test_add_car_empty_db(self):
+        """ Test add car view to empty db"""
+        c = Client()
+        self.assertEqual(reverse("car:car_list"), URL_CAR_LIST)
+
+        response = c.get(URL_CAR_LIST)
+        self.assertNotIn("cars", response.context['cars'])
+
+        cars = response.context['cars']
+        for car in cars:
+            car_delete(car.id)
+
+        car_append(**CAR)
