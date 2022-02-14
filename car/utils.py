@@ -8,7 +8,6 @@ def put(pk: int, name: str, speed: int, price: int) -> None:
     """ Replace the car instance by pk """
 
     car_index = -1
-
     for index, car in enumerate(cars):
         if car.id == pk:
             car_index = index
