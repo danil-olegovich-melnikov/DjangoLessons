@@ -12,13 +12,13 @@ def car_list(request: HttpRequest) -> HttpResponse:
 
 
 def car_delete(request: HttpRequest, pk: int) -> HttpResponseRedirect:
-    utils.delete(pk)
+    utils.car_delete(pk)
     return redirect(reverse('car:car_list'))
 
 
 def car_add(request: HttpRequest) -> HttpResponseRedirect:
     if request.method == "POST":
-        utils.append(
+        utils.car_append(
             request.POST.get("name", ""),
             int(request.POST.get("speed", -1)),
             int(request.POST.get("price", -1)),
