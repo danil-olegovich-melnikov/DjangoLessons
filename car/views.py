@@ -8,7 +8,7 @@ from . import utils
 
 # Create your views here.
 def car_list(request: HttpRequest) -> HttpResponse:
-    return render(request, 'car/index.html', context={"cars": utils.cars})
+    return render(request, 'car/index.html', context={"cars": utils.get()})
 
 
 def car_delete(request: HttpRequest, pk: int) -> HttpResponseRedirect:

@@ -16,14 +16,14 @@ URL_CAR_PUT = "/car/delete/"
 
 CAR1 = {
     "name": "X",
-    "price": -1,
-    "speed": -1,
+    "price": 0,
+    "speed": 0,
 }
 
 CAR2 = {
     "name": "N",
-    "price": -1,
-    "speed": -1,
+    "price": 0,
+    "speed": 0,
 }
 
 def check_dict_class(c: dict, C: Car):
