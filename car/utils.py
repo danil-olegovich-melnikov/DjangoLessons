@@ -1,37 +1,33 @@
-from .db import *
+from typing import List
 
+from . import models
+from .db import *
 
 if 'cars' not in globals():
     cars = []
 
+
+def get() -> List:
+    """ Retrieve all the car instances from db"""
+    return models.Car.objects.all()
+
+
 def put(pk: int, name: str, speed: int, price: int) -> None:
     """ Replace the car instance by pk """
+    instance = models.Car.objects.filter(id=pk)
+    if instance.exists():
+        instance = instance[0]
+        instance.name = name
+        instance.speed = speed
+        instance.price = price
+        instance.save()
 
-    car_index = -1
-    for index, car in enumerate(cars):
-        if car.id == pk:
-            car_index = index
-            break
-
-    if car_index == -1:
-        return
-
-    cars[car_index] = Car(pk, name, speed, price)
 
 def car_delete(pk: int) -> None:
     """ Delete the car instance by pk """
-
-    global cars
-    cars = [car for car in cars if car.id != pk]
+    models.Car.objects.filter(id=pk).delete()
 
 
 def car_append(name: str, speed: int, price: int) -> None:
     """ Append the car instance """
-
-    if len(cars):
-        pk = cars[-1].id + 1
-    else:
-        pk = 1
-
-    cars.append(Car(id=pk, name=name, speed=speed, price=price))
-
+    models.Car(name=name, speed=speed, price=price).save()
