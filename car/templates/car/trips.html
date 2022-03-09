@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Пробег - {{ car.name }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="icon"
+          href="https://s170.convertio.me/p/rHI4lGXHw7dbr5WhPEkaYA/48d3cd030e8eeadcdc2fd87a3aefc6db/%D0%91%D0%B5%D0%B7-%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F.ico"/>
+</head>
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    small {
+        font-weight: 500;
+    }
+
+    input {
+        min-width: 350px;
+    }
+</style>
+<body>
+<div class="container py-5">
+    <a href="/car/" class="btn btn-light btn-sm mb-3"><--</a>
+    <h3>Пробег - {{ car.name }}</h3>
+    <div class="text-right">
+        <button class="btn btn-primary btn-sm" id="addTrip">Добавить пробег</button>
+    </div>
+
+
+    <div class="d-flex text-center mt-3">
+        <div class="form-group">
+            <input id="start_day_filter" type="date" class="form-control">
+            <small>Дата начало</small>
+        </div>
+        <div class="form-group ml-3">
+            <input id="end_day_filter" type="date" class="form-control">
+            <small>Дата конец</small>
+        </div>
+        <div class="ml-auto">
+            <div class=" btn btn-primary" onclick="search()">🔍</div>
+        </div>
+    </div>
+    {% if trips %}
+    <table class="table mt-5">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название</th>
+            <th scope="col">Пробег</th>
+            <th scope="col">Дата</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for trip in trips %}
+        <tr id="trip-{{trip.id}}">
+            <td>{{ trip.id }}</td>
+            <td>{{ trip.car.name }}</td>
+            <td>{{ trip.number_of_km }}</td>
+            <td>{{ trip.date }}</td>
+            <td>
+                <div class="delete-ajax btn btn-danger btn-sm"
+                     data="{{ trip.id}}"
+                     onclick="del('{{trip.id}}')">x
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center my-4">У данный машины нулевой пробег</p>
+    {% endif %}
+
+
+    <div id="addTripModal" class="modal">
+        <div class="modal-content w-50">
+            <span class="close ml-auto">&times;</span>
+
+            <h5 class="my-3">Новый пробег</h5>
+            <form action="add/" method="post" class="text-center">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm" placeholder="Пробег"
+                           name="number_of_km" min="0">
+                    <input type="date" name="date" class="my-3 form-control form-control-sm">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Добавить
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if n_pages %}
+    <ul class="pagination justify-content-center mt-5">
+        {% for page in n_pages %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{page}}&start_day={{start_day}}&end_day={{end_day}}">
+                {{page}}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div>
+<script>
+    let start_day = document.getElementById("start_day_filter");
+    let end_day = document.getElementById("end_day_filter");
+
+    function search() {
+        window.location = `?start_day=${start_day.value}&end_day=${end_day.value}`
+    }
+
+
+    function del(pk) {
+        fetch('delete/' + pk, {method: 'GET'})
+        document.getElementById("trip-" + pk).remove();
+    }
+
+    let modal = document.getElementById("addTripModal");
+    let btn = document.getElementById("addTrip");
+    let span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+</script>
+</body>
+</html>
