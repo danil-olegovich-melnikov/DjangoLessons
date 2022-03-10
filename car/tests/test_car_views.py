@@ -28,7 +28,7 @@ class TestCarViews(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'car/index.html')
+        self.assertTemplateUsed(response, 'car/cars.html')
         self.assertIn('cars', response.context)
         self.assertIsInstance(response.context['cars'], QuerySet)
         self.assertEqual(len(response.context['cars']), 1)

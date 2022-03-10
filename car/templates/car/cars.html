@@ -1,0 +1,96 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Список доступных машин!</title>
+    <link rel="icon" href="https://s170.convertio.me/p/rHI4lGXHw7dbr5WhPEkaYA/48d3cd030e8eeadcdc2fd87a3aefc6db/%D0%91%D0%B5%D0%B7-%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F.ico"/>
+    <link rel="stylesheet" href="{% static 'car/css/styles.css' %}">
+</head>
+<body>
+{% include 'car/nav.html' %}
+<div class="container py-5">
+    <h3>Доступные машины</h3>
+    <div class="text-right">
+        <button class="btn btn-primary btn-sm" id="addCar">Добавить машину</button>
+    </div>
+    <div class="input-group mt-4">
+        <input id="car-search-bar" type="text" class="form-control" placeholder="Поиск по имени" value="{{ name }}">
+        <div class="input-group-append">
+            <span class="input-group-text btn btn-primary" onclick="search()">🔍</span>
+        </div>
+    </div>
+    {% if cars %}
+
+    <table class="table mt-4">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название</th>
+            <th scope="col">Стоимость</th>
+            <th scope="col">Максимальная скорость</th>
+            <th scope="col">Пробег</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for car in cars %}
+        <tr id="car-{{car.id}}">
+            <td>{{ car.id }}</td>
+            <td id="car-{{car.id}}-name" class="editable" contenteditable onblur="put('{{car.id}}')">{{ car.name }}</td>
+            <td id="car-{{car.id}}-price" class="editable" contenteditable onblur="put('{{car.id}}')">{{ car.price }}</td>
+            <td id="car-{{car.id}}-max_speed" class="editable" contenteditable onblur="put('{{car.id}}')">{{ car.speed }}</td>
+            <td>{{ car.total_number_km }} км</td>
+            <td>
+                <div class="delete-ajax btn btn-danger btn-sm"
+                     data="{{ car.id}}"
+                     onclick="del('{{car.id}}')">x
+                </div>
+                <a class="btn btn-warning btn-sm" href="{{ car.id }}/trips">🚙</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+
+    {% else %}
+    <p class="text-center my-4">В данный момент машин нет ...</p>
+    {% endif %}
+
+
+    <div id="addCarModal" class="modal">
+        <div class="modal-content w-50">
+            <span class="close ml-auto">&times;</span>
+
+            <h5 class="my-3">Новая машина</h5>
+            <form action="/car/add/" method="post" class="text-center">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-sm" placeholder="Название" name="name" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm" placeholder="Стоимость" name="price" min="0" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm" placeholder="Максимальная скорость"
+                           name="speed" min="0" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Добавить
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const csrf = "{{ csrf_token }}";
+</script>
+<script src="{% static 'car/js/main.js'%}"></script>
+</body>
+</html>

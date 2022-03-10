@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Регистрация</title>
+</head>
+<body>
+{% include 'car/nav.html' %}
+
+<div class="container bg-light my-5 p-5">
+    <h2 class="my-4">Регистрация</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input required type="text" class="form-control" value="{{ username }}" id="login_form" name="username"
+                   placeholder="никнейм">
+        </div>
+        <div class="mb-3">
+            <input required type="password" class="form-control" name="password1" id="password1_form"
+                   placeholder="Пароль">
+        </div>
+        <div class="mb-3">
+            <input required type="password" class="form-control" name="password2" id="password2_form"
+                   placeholder="Повторите пароль">
+        </div>
+        <div class="mb-3 form-check">
+            <p class="text-danger">{{ message }}</p>
+        </div>
+        <button type="submit" class="btn btn-primary">Регистрация</button>
+
+        <div class="mt-2">
+            <small>Уже имеется аккаунт? <a href="{% url 'worker:login' %}">Войти</a></small>
+        </div>
+    </form>
+</div>
+</body>
+</html>

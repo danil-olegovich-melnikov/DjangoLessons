@@ -1,9 +1,11 @@
 import datetime
-
+from django.contrib.auth.models import User
 from django.db import models
+
 
 # Create your models here.
 class Car(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     name = models.CharField("Название", max_length=100)
     price = models.PositiveSmallIntegerField("Цена")
     speed = models.PositiveSmallIntegerField("Скорость")

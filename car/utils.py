@@ -1,13 +1,28 @@
 from typing import List
 
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.http import HttpResponseNotFound
 
 from . import models
 
 
-def car_get(name: str) -> List[models.Car]:
+def check_car(func, ):
+    def wrapper(*args, **kwargs):
+        user = args[0].user
+        car_id = kwargs['pk']
+
+        if not models.Car.objects.filter(user=user, pk=car_id).exists():
+            return HttpResponseNotFound("Not found")
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def car_get(user: User, name: str) -> List[models.Car]:
     """ Retrieve all the car instances from db"""
-    cars = models.Car.objects.all()
+    cars = models.Car.objects.filter(user=user)
 
     if len(name) > 0:
         cars = cars.filter(name__icontains=name)
@@ -15,14 +30,14 @@ def car_get(name: str) -> List[models.Car]:
     return cars
 
 
-def car_get_by_pk(pk) -> models.Car:
+def car_get_by_pk(user: User, pk: int) -> models.Car:
     """ Retrieve all the car instances from db"""
-    return models.Car.objects.get(pk=pk)
+    return models.Car.objects.filter(user=user, pk=pk)
 
 
-def car_put(pk: int, name: str, speed: int, price: int) -> None:
+def car_put(user: User, pk: int, name: str, speed: int, price: int) -> None:
     """ Replace the car instance by pk """
-    instance = models.Car.objects.filter(id=pk)
+    instance = models.Car.objects.filter(user=user, id=pk)
 
     if not instance.exists():
         return
@@ -34,14 +49,14 @@ def car_put(pk: int, name: str, speed: int, price: int) -> None:
     instance.save()
 
 
-def car_delete(pk: int) -> None:
+def car_delete(user: User, pk: int) -> None:
     """ Delete the car instance by pk """
-    models.Car.objects.filter(id=pk).delete()
+    models.Car.objects.filter(user=user, id=pk).delete()
 
 
-def car_append(name: str, speed: int, price: int) -> None:
+def car_append(user: User, name: str, speed: int, price: int) -> None:
     """ Append the car instance """
-    models.Car(name=name, speed=speed, price=price).save()
+    models.Car(user=user, name=name, speed=speed, price=price).save()
 
 
 def trip_get(pk: int, start_day: str, end_day: str) -> Paginator:
