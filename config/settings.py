@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_celery_beat',
+    'django_celery_results',
+
     'car',
     'worker',
 ]
@@ -129,5 +133,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'worker:login'
 
-
-
+CELERY_RESULT_BACKEND = "django-db"

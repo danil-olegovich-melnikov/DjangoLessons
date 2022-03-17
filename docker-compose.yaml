@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+  redis:
+    image: redis
+    command: ["redis-server"]
+    ports:
+      - "6379:6379"
+
+  backend:
+    container_name: backendDjangoProject
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app/back
+    ports:
+      - "4000:4000"
+    depends_on:
+      - redis
+
+  celery-worker:
+    build: .
+    command: ["celery", "-A", "config", "worker", "-l", "info", "-P", "gevent"]
+    volumes:
+      - .:/app/back
+    depends_on:
+      - redis
+      - backend
+
