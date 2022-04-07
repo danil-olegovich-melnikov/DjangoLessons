@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 
-
 # Create your views here.
 from django.urls import reverse
 from . import models
@@ -67,10 +66,13 @@ def email_verification(request):
             return redirect(request.path_info)
 
         email_code = models.EmailCode.objects.filter(user=user, code=code)
+
         if not email_code.exists():
-            models.EmailCode.objects.get(user=user).save()
+            user.is_active = True
+            user.save()
+            return redirect(reverse('worker:login'))
+        else:
+            models.EmailCode.objects.get_or_create(user=user)[0].save()
 
-        user.is_active = True
-        user.save()
-
+        return redirect(request.path_info)
     return render(request, 'registration/verification.html', context={})

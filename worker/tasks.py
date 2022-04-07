@@ -1,8 +1,10 @@
 from celery import shared_task
 import time
 
-@shared_task(name="sum_two_numbers")
+
+@shared_task(name="send_verification_email")
 def send_verification_email(email: str, code: str):
-    time.sleep(10)
-    print(email, code)
-    return True
+    print("Receiving")
+    time.sleep(5)
+    print("ENDED")
+    return False

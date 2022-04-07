@@ -9,22 +9,23 @@ services:
 
   backend:
     container_name: backendDjangoProject
+    environment:
+      PYTHONUNBUFFERED: 1
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - .:/app/back
     ports:
-      - "4000:4000"
+      - "8000:8000"
     depends_on:
       - redis
 
   celery-worker:
     build: .
-    command: ["celery", "-A", "config", "worker", "-l", "info", "-P", "gevent"]
+    command: ["celery", "-A", "config", "worker", "-l", "info"]
     volumes:
       - .:/app/back
     depends_on:
       - redis
       - backend
-

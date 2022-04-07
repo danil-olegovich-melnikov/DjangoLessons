@@ -15,5 +15,6 @@ class EmailCode(models.Model):
     def save(self, *args, **kwargs):
         self.code = str(random.randint(1000, 9999))
         # tasks.send_verification_email(email=self.user.email, code=self.code)
+        print("Sended\n" * 5)
         tasks.send_verification_email.delay(email=self.user.email, code=self.code)
         super(EmailCode, self).save(*args, **kwargs)
